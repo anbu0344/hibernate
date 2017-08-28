@@ -1,100 +1,33 @@
 package model;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.List;
-
 import javax.persistence.Query;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 
-import model.Item;
 import model.User;
-
-public class Operations {
-	public static void insert() throws IOException{
-		BufferedReader bf=new BufferedReader(new InputStreamReader(System.in));
-		SessionFactory sf=new Configuration().configure().buildSessionFactory();
-		Session session=sf.openSession();
-		session.beginTransaction();
-		Item[] item=new Item[50];
-		int j=2;
-		System.out.println("Number of items to be inserted:");
-		Integer n=Integer.parseInt(bf.readLine());
-		for(int i=0;i<n;i++){
-			System.out.println("Enter the item name:");
-			item[j]=new Item();
-			item[j].setiName(bf.readLine());
-			System.out.println("Enter the price:");
-			item[j].setPrice(Integer.parseInt(bf.readLine()));
-			System.out.println("Enter the quantity:");
-			item[j].setQuantity(Integer.parseInt(bf.readLine()));
-			System.out.println("Enter the Expiry Date:");
-			item[j].seteDate(bf.readLine());
-			System.out.println("Enter the Manufacturing Date:");
-			item[j].setmDate(bf.readLine());
-			session.save(item[j]);
-			j++;
-		}
-		session.getTransaction().commit();
-		session.close();
-	}
-	public static void retrieve(){ 
-		SessionFactory sf=new Configuration().configure().buildSessionFactory();
-		Session session=sf.openSession();
-		session.beginTransaction();
-		Query query=session.createQuery("from Item");
-		List<Item> list= query.getResultList();
-		for(Item each:list){
-			System.out.println(each.getId()+"   "+each.getiName()+"   "+each.getPrice()+"   "+each.getQuantity()+"   "+each.getmDate()+"   "+each.geteDate());
-		}
-		session.getTransaction().commit();
-		session.close();
-	}
-	public static void update() throws NumberFormatException, IOException{
-		SessionFactory sf=new Configuration().configure().buildSessionFactory();
-		Session session=sf.openSession();
-		session.beginTransaction();
-		Query query=session.createQuery("from Item");
-		List<Item> list= query.getResultList();
-		
-		BufferedReader bf=new BufferedReader(new InputStreamReader(System.in));
-		System.out.println("Enter the item id to be updated:");
-		int ch=Integer.parseInt(bf.readLine());
-		//System.out.println(item[ch-1].getiName());
-		
-		for(Item each:list){
-			if(ch==each.getId()){
-				System.out.println("Enter the new item name:");
-				String ite=bf.readLine();
-				each.setiName(ite);
-			}
-			//System.out.println(each.getId()+"   "+each.getiName()+"   "+each.getPrice()+"   "+each.getQuantity()+"   "+each.getmDate()+"   "+each.geteDate());
-		}
-		
-		session.getTransaction().commit();
-		session.close();
-	}
-	public static void delete() throws NumberFormatException, IOException{
-		SessionFactory sf=new Configuration().configure().buildSessionFactory();
-		Session session=sf.openSession();
-		session.beginTransaction();
-		BufferedReader bf=new BufferedReader(new InputStreamReader(System.in));
-		System.out.println("Entert the item id to be deleted:");
-		int ch=Integer.parseInt(bf.readLine());
-		Query query=session.createQuery("from Item");
-		List<Item> list= query.getResultList();
-		for(Item each:list){
-			if(ch==each.getId()){
-				session.delete(each);
+public class Authentication {
+		public static boolean check(User user){
+		SessionFactory sf1=new Configuration().configure().buildSessionFactory();
+		Session session1=sf1.openSession();
+		session1.beginTransaction();
+		Query query=session1.createQuery("from User");
+		List<User> list= query.getResultList();
+		for(User each:list){
+			String u1=each.getUserName();
+			String u2=user.getUserName();
+			String p1=each.getPassword();
+			String p2=user.getPassword();
+			//System.out.println(each.getUserName()+" "+user.getUserName()+" "+each.getPassword()+" "+user.getPassword());
+			//System.out.println(u1.getClass().getSimpleName()+" "+u2.getClass().getSimpleName());
+			if(u1.compareTo(u2)==0 && p1.compareTo(p2)==0){
+				//System.out.println("true");
+				return true;
 			}
 		}
-		session.getTransaction().commit();
-		session.close();
+		//System.out.println("false");
+		return false;
 	}
-
-	
 }
